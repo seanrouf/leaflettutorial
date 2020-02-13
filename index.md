@@ -1,37 +1,125 @@
-## Welcome to GitHub Pages
+<html lang="en">
 
-You can use the [editor on GitHub](https://github.com/seanrouf/leaflettutorial/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+<head>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+  <title>Basic Mappa Tutorial</title>
 
-```markdown
-Syntax highlighted code block
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js" type="text/javascript"></script>
 
-# Header 1
-## Header 2
-### Header 3
+  <script src="https://unpkg.com/mappa-mundi/dist/mappa.js" type="text/javascript"></script>
 
-- Bulleted
-- List
+</head>
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
+<body>
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+  <script>
 
-### Jekyll Themes
+let myMap;
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/seanrouf/leaflettutorial/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+let canvas;
 
-### Support or Contact
+const mappa = new Mappa('Leaflet');
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+
+const options = {
+
+  lat: 49.26394,
+
+  lng: -123.24574,
+
+  zoom: 2.4,
+
+  style: "https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png"
+
+}
+
+
+
+function setup(){
+
+  canvas = createCanvas(640,640);
+
+  myMap = mappa.tileMap(options); 
+
+  myMap.overlay(canvas) 
+
+
+
+
+
+  meteorites = loadTable('Meteorite_Landings.csv', 'csv', 'header');
+
+
+
+  myMap.onChange(drawMeteorites);
+
+
+
+  fill(255, 0, 0); 
+
+  stroke(100);
+
+}
+
+
+
+function draw(){
+
+}
+
+
+
+
+
+function drawMeteorites() {
+
+
+
+  clear();
+
+
+
+  for (let i = 0; i < meteorites.getRowCount(); i++) {
+
+
+
+    const latitude = Number(meteorites.getString(i, 'reclat'));
+
+    const longitude = Number(meteorites.getString(i, 'reclong'));
+
+
+
+
+
+    if (myMap.map.getBounds().contains({lat: latitude, lng: longitude})) {
+
+      const pos = myMap.latLngToPixel(latitude, longitude);
+
+
+
+      let size = meteorites.getString(i, 'mass (g)');
+
+      size = map(size, 558, 60000000, 1, 25) + myMap.zoom();
+
+      ellipse(pos.x, pos.y, size, size);
+
+    }
+
+  }
+
+}
+
+	  
+
+  </script>
+
+</body>
+
+
+
+</html>
